@@ -503,13 +503,15 @@ if(THRILL_USE_S3)
   find_package(OpenSSL REQUIRED)
 
   # build libS3 as cmake library
-  add_subdirectory(extlib/libs3)
+  #add_subdirectory(extlib/libs3)
+  hunter_add_package(libs3)
+  find_package(libs3)
 
   # add libS3 and dependencies to thrill's dependencies
   list(APPEND THRILL_DEFINITIONS "THRILL_HAVE_LIBS3=1")
-  set(THRILL_INCLUDE_DIRS
-    "${CMAKE_CURRENT_SOURCE_DIR}/extlib/libs3/libs3/inc" ${THRILL_INCLUDE_DIRS})
-  set(THRILL_LINK_LIBRARIES s3 ${THRILL_LINK_LIBRARIES})
+  #set(THRILL_INCLUDE_DIRS
+  #  "${CMAKE_CURRENT_SOURCE_DIR}/extlib/libs3/libs3/inc" ${THRILL_INCLUDE_DIRS})
+  #set(THRILL_LINK_LIBRARIES s3 ${THRILL_LINK_LIBRARIES})
 
   # saved code to detect libs3 on the system. use this once multipart upload is
   # mainstream.
