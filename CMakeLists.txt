@@ -10,11 +10,18 @@
 # All rights reserved. Published under the BSD-2 license in the LICENSE file.
 ################################################################################
 
-cmake_minimum_required(VERSION 2.8.12)
+cmake_minimum_required(VERSION 3.0)
+
+include("cmake/Hunter/HunterGate.cmake")
+HunterGate(
+        URL "https://github.com/ruslo/hunter/archive/v0.16.24.tar.gz"
+        SHA1 "00ab627d3d4fe5151e15b6ab2b1b1da17650984a"
+)
 
 # custom cmake scripts
-set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/misc/cmake)
-
+#set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/misc/cmake)
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/misc/cmake ${CMAKE_MODULE_PATH})
+set(CMAKE_CXX_STANDARD 14)
 # project: we only use C++
 project(thrill)
 
@@ -342,7 +349,9 @@ if(NOT MSVC)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-missing-field-initializers -Wno-deprecated")
 endif()
 
-add_subdirectory(extlib/googletest/googletest)
+hunter_add_package(GTest)
+find_package(GTest)
+#add_subdirectory(extlib/googletest/googletest)
 
 if(NOT MSVC)
   set(CMAKE_CXX_FLAGS "${GTEST_SAVE_CXX_FLAGS}")
@@ -366,9 +375,11 @@ endif()
 
 ###############################################################################
 # add cereal
+hunter_add_package(cereal)
+find_package(cereal)
 
-set(THRILL_INCLUDE_DIRS
-  "${CMAKE_CURRENT_SOURCE_DIR}/extlib/cereal/include" ${THRILL_INCLUDE_DIRS})
+#set(THRILL_INCLUDE_DIRS
+#  "${CMAKE_CURRENT_SOURCE_DIR}/extlib/cereal/include" ${THRILL_INCLUDE_DIRS})
 
 ################################################################################
 ### Find Required Libraries
@@ -387,7 +398,9 @@ set(THRILL_LINK_LIBRARIES ${CMAKE_DL_LIBS} ${THRILL_LINK_LIBRARIES})
 
 # use tlx
 
-add_subdirectory(extlib/tlx)
+hunter_add_package(tlx)
+find_package(tlx)
+#add_subdirectory(extlib/tlx)
 set(THRILL_LINK_LIBRARIES tlx ${THRILL_LINK_LIBRARIES})
 
 # try to find jemalloc (optional)
@@ -408,6 +421,9 @@ endif()
 # use ZLIB for transparent .gz compression/decompression
 
 if(THRILL_USE_ZLIB STREQUAL "AUTO")
+  if( HUNTER_ENABLED )
+    hunter_add_package(ZLIB)
+  endif()
   find_package(ZLIB)
   if(ZLIB_FOUND)
     message("Using zlib for transparent .gz compression/decompression.")
@@ -419,8 +435,10 @@ if(THRILL_USE_ZLIB STREQUAL "AUTO")
 endif()
 
 if(THRILL_USE_ZLIB)
+  if( HUNTER_ENABLED )
+    hunter_add_package(ZLIB)
+  endif()
   find_package(ZLIB REQUIRED)
-
   list(APPEND THRILL_DEFINITIONS "THRILL_HAVE_ZLIB=1")
   set(THRILL_INCLUDE_DIRS ${ZLIB_INCLUDE_DIRS} ${THRILL_INCLUDE_DIRS})
   set(THRILL_LINK_LIBRARIES ${ZLIB_LIBRARIES} ${THRILL_LINK_LIBRARIES})
@@ -429,6 +447,9 @@ endif()
 # use BZLIB for transparent .bz2 compression/decompression
 
 if(THRILL_USE_BZIP2 STREQUAL "AUTO")
+  if( HUNTER_ENABLED )
+    hunter_add_package(BZip2)
+  endif()
   find_package(BZip2)
   if(BZIP2_FOUND)
     message("Using bzip2 for transparent .bz2 compression/decompression.")
@@ -440,8 +461,10 @@ if(THRILL_USE_BZIP2 STREQUAL "AUTO")
 endif()
 
 if(THRILL_USE_BZIP2)
+  if( HUNTER_ENABLED )
+    hunter_add_package(BZip2)
+  endif()
   find_package(BZip2 REQUIRED)
-
   list(APPEND THRILL_DEFINITIONS "THRILL_HAVE_BZIP2=1")
   set(THRILL_INCLUDE_DIRS ${BZIP2_INCLUDE_DIRS} ${THRILL_INCLUDE_DIRS})
   set(THRILL_LINK_LIBRARIES ${BZIP2_LIBRARIES} ${THRILL_LINK_LIBRARIES})
@@ -451,8 +474,13 @@ endif()
 
 if(THRILL_USE_S3 STREQUAL "AUTO")
   # test for all dependencies of libS3
+  if( HUNTER_ENABLED )
+    hunter_add_package(CURL)
+    hunter_add_package(libxml2)
+    hunter_add_package(OpenSSL)
+  endif()
   find_package(CURL)
-  find_package(LibXml2)
+  find_package(libxml2)
   find_package(OpenSSL)
 
   if(CURL_FOUND AND LIBXML2_FOUND AND OPENSSL_FOUND)
@@ -465,8 +493,13 @@ if(THRILL_USE_S3 STREQUAL "AUTO")
 endif()
 
 if(THRILL_USE_S3)
+  if( HUNTER_ENABLED )
+    hunter_add_package(CURL)
+    hunter_add_package(libxml2)
+    hunter_add_package(OpenSSL)
+  endif()
   find_package(CURL REQUIRED)
-  find_package(LibXml2 REQUIRED)
+  find_package(libxml2 REQUIRED)
   find_package(OpenSSL REQUIRED)
 
   # build libS3 as cmake library
@@ -564,8 +597,11 @@ endif()
 
 # detect Boost libraries (optional). Currently no components linked.
 # uses: Spirit.Qi in tutorial
-
-find_package(Boost 1.42.0 COMPONENTS)
+#if( HUNTER_ENABLED )
+#hunter_add_package(Boost )
+#endif()
+set(BOOST_ROOT /home/tom/z.git.github.beautycpp/boost.install)
+find_package(Boost ) #1.42.0 COMPONENTS)
 if(Boost_FOUND)
   set(THRILL_INCLUDE_DIRS ${Boost_INCLUDE_DIRS} ${THRILL_INCLUDE_DIRS})
   set(THRILL_LINK_LIBRARIES ${Boost_LIBRARIES} ${THRILL_LINK_LIBRARIES})

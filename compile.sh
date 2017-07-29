@@ -45,6 +45,7 @@ elif [ "$(uname)" == "Darwin" ]; then
 else
     CORES=4
 fi
+CORES=2
 MAKEOPTS=-j$CORES
 
 if [ ! -d "build" ]; then
