@@ -22,6 +22,7 @@ HunterGate(
 #set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/misc/cmake)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/misc/cmake ${CMAKE_MODULE_PATH})
 set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # project: we only use C++
 project(thrill)
 
@@ -49,23 +50,23 @@ option(THRILL_BUILD_TESTS "Build thrill's tests and benchmarks." OFF)
 
 # THRILL_USE_ZLIB tristate switch
 set(THRILL_USE_ZLIB AUTO CACHE
-  STRING "Use (optional) zlib for transparent .gz compression/decompression.")
+  STRING "Use (optional) zlib for transparent .gz compression/decompression." ON)
 set_property(CACHE THRILL_USE_ZLIB PROPERTY STRINGS AUTO ON OFF)
 
 # THRILL_USE_BZIP2 tristate switch
 set(THRILL_USE_BZIP2 AUTO CACHE
-  STRING "Use (optional) bzip2 for transparent .bz2 compression/decompression.")
+  STRING "Use (optional) bzip2 for transparent .bz2 compression/decompression." ON)
 set_property(CACHE THRILL_USE_BZIP2 PROPERTY STRINGS AUTO ON OFF)
 
 # THRILL_USE_MPI tristate switch
-set(THRILL_USE_MPI AUTO CACHE STRING "Use (optional) MPI net backend.")
+set(THRILL_USE_MPI AUTO CACHE STRING "Use (optional) MPI net backend." OFF)
 set_property(CACHE THRILL_USE_MPI PROPERTY STRINGS AUTO ON OFF)
 
 option(THRILL_USE_TBB
   "Use (optional) Intel TBB library if available." ON)
 
 option(THRILL_USE_JEMALLOC
-  "Use (optional) JeMalloc allocation library if available." ON)
+  "Use (optional) JeMalloc allocation library if available." OFF)
 
 option(THRILL_USE_GCOV
   "Compile and run tests with gcov for coverage analysis." OFF)
@@ -87,7 +88,7 @@ option(THRILL_TRY_COMPILE_HEADERS
 
 # THRILL_USE_S3 tristate switch
 set(THRILL_USE_S3 AUTO CACHE
-  STRING "Build libs3 as library. Enabled by default if all dependencies are found.")
+  STRING "Build libs3 as library. Enabled by default if all dependencies are found." OFF)
 set_property(CACHE THRILL_USE_S3 PROPERTY STRINGS AUTO ON OFF)
 
 option(THRILL_USE_HDFS3
@@ -335,7 +336,7 @@ endif(THRILL_USE_GCOV)
 
 ###############################################################################
 # enable gtest framework, valgrind, and collection of results
-
+if(THRILL_BUILD_TESTS)
 enable_testing()
 include(CTest)
 
@@ -352,6 +353,7 @@ endif()
 hunter_add_package(GTest)
 find_package(GTest)
 #add_subdirectory(extlib/googletest/googletest)
+endif()
 
 if(NOT MSVC)
   set(CMAKE_CXX_FLAGS "${GTEST_SAVE_CXX_FLAGS}")
@@ -553,7 +555,8 @@ endif()
 # try to find Intel TBB (optional)
 
 if(THRILL_USE_TBB)
-  find_package(TBB)
+  hunter_add_package(tbb)
+  find_package(tbb)
 endif()
 
 if(NOT TBB_FOUND)
@@ -602,7 +605,8 @@ endif()
 #if( HUNTER_ENABLED )
 #hunter_add_package(Boost )
 #endif()
-set(BOOST_ROOT /home/tom/z.git.github.beautycpp/boost.install)
+#set(BOOST_ROOT /home/tom/z.git.github.beautycpp/boost.install)
+hunter_add_package(Boost)
 find_package(Boost ) #1.42.0 COMPONENTS)
 if(Boost_FOUND)
   set(THRILL_INCLUDE_DIRS ${Boost_INCLUDE_DIRS} ${THRILL_INCLUDE_DIRS})
@@ -670,6 +674,7 @@ endmacro(thrill_test_multiple)
 
 # descend into library source
 add_subdirectory(thrill)
+
 
 if(THRILL_BUILD_TESTS)
   # descend into testsuite

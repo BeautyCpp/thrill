@@ -8,13 +8,16 @@
 # All rights reserved. Published under the BSD-2 license in the LICENSE file.
 ################################################################################
 
+hunter_add_package(GTest)
+find_package(GTest CONFIG REQUIRED)
+
 include_directories(SYSTEM ${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
 # macro for building test target programs with correct libraries
 macro(thrill_build_target TARGETNAME)
 
   add_executable(${TARGETNAME} ${ARGN})
-  target_link_libraries(${TARGETNAME} thrill gtest gtest_main)
+  target_link_libraries(${TARGETNAME} thrill GTest::gtest GTest::main)
 
 endmacro(thrill_build_target)
 
