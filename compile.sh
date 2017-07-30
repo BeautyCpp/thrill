@@ -11,7 +11,7 @@
 
 set -ex
 
-git submodule update --init --recursive
+#git submodule update --init --recursive
 
 CMAKE_OPTS="-DTHRILL_BUILD_EXAMPLES=ON -DTHRILL_BUILD_TESTS=ON"
 
@@ -45,14 +45,14 @@ elif [ "$(uname)" == "Darwin" ]; then
 else
     CORES=4
 fi
-CORES=2
+#CORES=2
 MAKEOPTS=-j$CORES
 
 if [ ! -d "build" ]; then
     mkdir build
 fi
 cd build
-cmake .. $CMAKE_OPTS $@
+cmake .. $CMAKE_OPTS #$@
 make $MAKEOPTS
 ctest -V
 

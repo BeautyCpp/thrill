@@ -51,19 +51,19 @@ option(THRILL_BUILD_TESTS "Build thrill's tests and benchmarks." OFF)
 # THRILL_USE_ZLIB tristate switch
 set(THRILL_USE_ZLIB AUTO CACHE
   STRING "Use (optional) zlib for transparent .gz compression/decompression." ON)
-set_property(CACHE THRILL_USE_ZLIB PROPERTY STRINGS AUTO ON OFF)
+#set_property(CACHE THRILL_USE_ZLIB PROPERTY STRINGS AUTO ON OFF)
 
 # THRILL_USE_BZIP2 tristate switch
 set(THRILL_USE_BZIP2 AUTO CACHE
   STRING "Use (optional) bzip2 for transparent .bz2 compression/decompression." ON)
-set_property(CACHE THRILL_USE_BZIP2 PROPERTY STRINGS AUTO ON OFF)
+#set_property(CACHE THRILL_USE_BZIP2 PROPERTY STRINGS AUTO ON OFF)
 
 # THRILL_USE_MPI tristate switch
 set(THRILL_USE_MPI AUTO CACHE STRING "Use (optional) MPI net backend." OFF)
-set_property(CACHE THRILL_USE_MPI PROPERTY STRINGS AUTO ON OFF)
+#set_property(CACHE THRILL_USE_MPI PROPERTY STRINGS AUTO ON OFF)
 
 option(THRILL_USE_TBB
-  "Use (optional) Intel TBB library if available." ON)
+  "Use (optional) Intel TBB library if available." OFF)
 
 option(THRILL_USE_JEMALLOC
   "Use (optional) JeMalloc allocation library if available." OFF)
@@ -87,9 +87,9 @@ option(THRILL_TRY_COMPILE_HEADERS
   "Test header files for self-sufficiency: try to compile them." OFF)
 
 # THRILL_USE_S3 tristate switch
-set(THRILL_USE_S3 AUTO CACHE
-  STRING "Build libs3 as library. Enabled by default if all dependencies are found." OFF)
-set_property(CACHE THRILL_USE_S3 PROPERTY STRINGS AUTO ON OFF)
+option(THRILL_USE_S3  
+   "Build libs3 as library. Enabled by default if all dependencies are found." OFF)
+#set_property(CACHE THRILL_USE_S3 PROPERTY STRINGS AUTO ON OFF)
 
 option(THRILL_USE_HDFS3
   "Download and build with libhdfs3 for hdfs:// support." OFF)
@@ -555,8 +555,10 @@ endif()
 # try to find Intel TBB (optional)
 
 if(THRILL_USE_TBB)
-  hunter_add_package(tbb)
+  #hunter_add_package(tbb)
   find_package(tbb)
+  #list(APPEND THRILL_DEFINITIONS "THRILL_HAVE_INTELTBB=1")
+  #set(THRILL_LINK_LIBRARIES ${TBB_LIBRARIES} ${THRILL_LINK_LIBRARIES})
 endif()
 
 if(NOT TBB_FOUND)
@@ -605,8 +607,8 @@ endif()
 #if( HUNTER_ENABLED )
 #hunter_add_package(Boost )
 #endif()
-#set(BOOST_ROOT /home/tom/z.git.github.beautycpp/boost.install)
-hunter_add_package(Boost)
+set(BOOST_ROOT /home/tom/z.git.github.beautycpp/boost.install/install)
+#hunter_add_package(Boost)
 find_package(Boost ) #1.42.0 COMPONENTS)
 if(Boost_FOUND)
   set(THRILL_INCLUDE_DIRS ${Boost_INCLUDE_DIRS} ${THRILL_INCLUDE_DIRS})
@@ -742,3 +744,6 @@ if(THRILL_TRY_COMPILE_HEADERS)
 endif(THRILL_TRY_COMPILE_HEADERS)
 
 ################################################################################
+
+
+
