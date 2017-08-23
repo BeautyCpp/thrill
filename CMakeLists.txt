@@ -65,6 +65,8 @@ set(THRILL_USE_MPI AUTO CACHE STRING "Use (optional) MPI net backend." OFF)
 option(THRILL_USE_TBB
   "Use (optional) Intel TBB library if available." OFF)
 
+option(THRILL_USE_MPI "Use Mpi" OFF)
+
 option(THRILL_USE_JEMALLOC
   "Use (optional) JeMalloc allocation library if available." OFF)
 

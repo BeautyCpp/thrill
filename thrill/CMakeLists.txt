@@ -106,7 +106,7 @@ endif()
 install(
 		DIRECTORY . 
 		DESTINATION include/thrill
-		PATTERN *.hpp
+    FILES_MATCHING PATTERN "*.hpp"
 	)
 # Config
 #   * <prefix>/lib/cmake/Async++/Async++Config.cmake
